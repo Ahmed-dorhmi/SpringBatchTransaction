@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.config;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,39 +31,39 @@ import com.example.repo.TransactionRepository;
 
 @Configuration
 @EnableBatchProcessing
-public class BatchConfig {
-	@Autowired private JobBuilderFactory jobBuilderFactory;
-	@Autowired private StepBuilderFactory stepBuilderFactory;
-	@Autowired private org.springframework.batch.item.ItemReader<Transaction> itemReader;
-	@Autowired private ItemWriter<Transaction> itemWriter;
-	@Autowired private ItemProcessor<Transaction,Transaction> itemProcessor;
+public class BatchConfig2 {
+	@Autowired private JobBuilderFactory jobBuilderFactory2;
+	@Autowired private StepBuilderFactory stepBuilderFactory2;
+	@Autowired private org.springframework.batch.item.ItemReader<Transaction> itemReader2;
+	@Autowired private ItemWriter<Transaction> itemWriter2;
+	@Autowired private ItemProcessor<Transaction,Transaction> itemProcessor2;
 
 	@Bean
-	public Job bancJob() {
-		Step step=stepBuilderFactory.get("step-name")
+	public Job bancJob2() {
+		Step step2=stepBuilderFactory2.get("step-name2")
 				.<Transaction,Transaction>chunk(100)
-				.reader(itemReader)
-				.writer(itemWriter)
-				.processor(itemProcessor)
+				.reader(itemReader2)
+				.writer(itemWriter2)
+				.processor(itemProcessor2)
 				.build();
 		
-		return jobBuilderFactory.get("job_name")
+		return jobBuilderFactory2.get("job_name2")
 				.incrementer(new RunIdIncrementer())
-				.start(step)
+				.start(step2)
 				.build();
 	}
 	@Bean
-	public FlatFileItemReader<Transaction> flatFileItemReader(@Value("${inputFile}") Resource inputFile) {
+	public FlatFileItemReader<Transaction> flatFileItemReader2(@Value("${inputFile2}") Resource inputFile) {
 		FlatFileItemReader<Transaction> fileItemReader = new FlatFileItemReader<Transaction>();
-		fileItemReader.setName("F1");
+		fileItemReader.setName("F2");
 		fileItemReader.setLinesToSkip(1);
 		fileItemReader.setResource(inputFile);
-		fileItemReader.setLineMapper(lineMappe());
+		fileItemReader.setLineMapper(lineMappe2());
 		return fileItemReader;
 	}
 	
 	@Bean
-	public LineMapper<Transaction> lineMappe() {
+	public LineMapper<Transaction> lineMappe2() {
 		DefaultLineMapper<Transaction> lineMapper = new DefaultLineMapper<Transaction>();
 		DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
 		lineTokenizer.setDelimiter(";");
@@ -77,7 +77,7 @@ public class BatchConfig {
 	}
 	
 	@Bean 
-	ItemProcessor<Transaction, Transaction> itemProcessor() {
+	ItemProcessor<Transaction, Transaction> itemProcessor2() {
 		return new ItemProcessor<Transaction, Transaction>() {
 			private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			@Override
@@ -91,7 +91,7 @@ public class BatchConfig {
 	}
 	
 	@Bean
-	ItemWriter<Transaction> itemWriter(){
+	ItemWriter<Transaction> itemWriter2(){
 		return new ItemWriter<Transaction>() {
 
 			@Autowired
@@ -99,6 +99,7 @@ public class BatchConfig {
 			@Override
 			public void write(List<? extends Transaction> items) throws Exception {
 				// TODO Auto-generated method stub
+				System.out.println(".....2");
 				transactionRepository.saveAll(items);
 				System.out.println();
 			}

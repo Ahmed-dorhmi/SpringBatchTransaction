@@ -1,0 +1,7 @@
+transaction_id;account_number;transaction_date;transaction_type;transaction_ammount
+7;157;11/12/2012;A;7500
+8;569;10/08/2012;A;4500
+9;234;11/12/2015;A;5000
+10;545;26/04/2012;A;6000
+11;874;10/07/2016;A;1500
+44;269;10/12/2013;A;2500
