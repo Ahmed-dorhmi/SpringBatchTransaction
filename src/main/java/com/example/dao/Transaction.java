@@ -18,8 +18,8 @@ public class Transaction {
 	@Id
 	private Long id;
 	private Long accountID;
-	@Transient
 	private Date transactionDate;
+	@Transient
 	private String strTransactionDate;
 	private String transactionType;
 	private Double transactionAmount;

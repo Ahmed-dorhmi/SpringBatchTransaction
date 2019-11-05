@@ -20,6 +20,7 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.convert.Delimiter;
 import org.springframework.context.annotation.Bean;
@@ -34,26 +35,33 @@ import com.example.repo.TransactionRepository;
 public class BatchConfig {
 	@Autowired private JobBuilderFactory jobBuilderFactory;
 	@Autowired private StepBuilderFactory stepBuilderFactory;
-	@Autowired private org.springframework.batch.item.ItemReader<Transaction> itemReader;
-	@Autowired private ItemWriter<Transaction> itemWriter;
-	@Autowired private ItemProcessor<Transaction,Transaction> itemProcessor;
+	@Autowired 
+	@Qualifier("flatFileItemReader")
+	private org.springframework.batch.item.ItemReader<Transaction> itemReader;
+	@Autowired 
+	@Qualifier("itemWriter")
+	private ItemWriter<Transaction> itemWriter;
+	@Autowired 
+	@Qualifier("itemProcessor")
+	private ItemProcessor<Transaction,Transaction> itemProcessor;
 
 	@Bean
 	public Job bancJob() {
-		Step step=stepBuilderFactory.get("step-name")
+		Step step=stepBuilderFactory.get("step-load")
 				.<Transaction,Transaction>chunk(100)
 				.reader(itemReader)
 				.writer(itemWriter)
 				.processor(itemProcessor)
 				.build();
 		
-		return jobBuilderFactory.get("job_name")
+		return jobBuilderFactory.get("from_csv")
 				.incrementer(new RunIdIncrementer())
 				.start(step)
 				.build();
 	}
 	@Bean
 	public FlatFileItemReader<Transaction> flatFileItemReader(@Value("${inputFile}") Resource inputFile) {
+		System.out.println(inputFile.getFilename());
 		FlatFileItemReader<Transaction> fileItemReader = new FlatFileItemReader<Transaction>();
 		fileItemReader.setName("F1");
 		fileItemReader.setLinesToSkip(1);
@@ -100,8 +108,6 @@ public class BatchConfig {
 			public void write(List<? extends Transaction> items) throws Exception {
 				// TODO Auto-generated method stub
 				transactionRepository.saveAll(items);
-				System.out.println(".....");
-				System.out.println();
 			}
 		};
 	}

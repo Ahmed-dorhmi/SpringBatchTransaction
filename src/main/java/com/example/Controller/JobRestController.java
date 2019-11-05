@@ -30,8 +30,8 @@ public class JobRestController {
 	private Job job;
 	
 	@Autowired
-	@Qualifier("bancJob2")
-	private Job job2;
+	@Qualifier("bancJobB")
+	private Job jobB;
 	
 	@RequestMapping("/load")
 	public BatchStatus load() throws Exception {
@@ -42,23 +42,19 @@ public class JobRestController {
 		while (jobExecution.isRunning()) {
 			System.out.println(".....");
 		}
-		System.out.println(job.getName());
-		System.out.println("--------------------1-----------------------------");
 		return jobExecution.getStatus();
 	}
 	
 	
-	@RequestMapping("/load2")
+	@RequestMapping("/export")
 	public BatchStatus load2() throws Exception {
 		Map<String, JobParameter> params=new HashMap<>();
 		params.put("time", new JobParameter(System.currentTimeMillis()));
 		JobParameters jobParameters = new JobParameters(params);
-		JobExecution jobExecution = jobLauncher.run(job2, jobParameters);
+		JobExecution jobExecution = jobLauncher.run(jobB, jobParameters);
 		while (jobExecution.isRunning()) {
-			System.out.println(".....2");
+			System.out.println(".....");
 		}
-		System.out.println(job.getName());
-		System.out.println("--------------------2-----------------------------");
 		return jobExecution.getStatus();
 	}
 }
